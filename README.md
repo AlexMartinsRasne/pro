@@ -106,6 +106,10 @@ src/
 - Contact form
 - Social media links
 
+To enable form submission, copy `.env.example` to `.env.local` and set either:
+- `SENDGRID_API_KEY`, `CONTACT_EMAIL`, and `FROM_EMAIL`, or
+- `FORM_ENDPOINT` for a public form provider such as Formspree.
+
 ## Customization
 
 ### Colors

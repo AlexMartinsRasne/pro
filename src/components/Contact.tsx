@@ -17,6 +17,8 @@ export default function Contact() {
     email: '',
     message: '',
   });
+  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -26,20 +28,34 @@ export default function Contact() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setStatus('sending');
+    setErrorMessage('');
 
-    const mailtoLink = `mailto:falconxxx475@gmail.com?subject=${encodeURIComponent(
-      `New message from ${formData.name || 'Visitor'}`
-    )}&body=${encodeURIComponent(
-      `${formData.message}\n\nContact Email: ${formData.email}`
-    )}`;
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
 
-    if (typeof window !== 'undefined') {
-      window.location.href = mailtoLink;
+      const result = await response.json();
+
+      if (!response.ok) {
+        setStatus('error');
+        setErrorMessage(result?.error || 'Unable to send message.');
+        return;
+      }
+
+      setStatus('success');
+      setFormData({ name: '', email: '', message: '' });
+    } catch (error) {
+      setStatus('error');
+      setErrorMessage('Network error. Please try again later.');
     }
-
-    setFormData({ name: '', email: '', message: '' });
   };
 
   const containerVariants = {
@@ -215,10 +231,17 @@ export default function Contact() {
               type="submit"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="btn-primary w-full sm:w-auto"
+              disabled={status === 'sending'}
+              className="btn-primary w-full sm:w-auto disabled:cursor-not-allowed disabled:opacity-60"
             >
-              Send Message
+              {status === 'sending' ? 'Sending...' : 'Send Message'}
             </motion.button>
+            {status === 'success' && (
+              <p className="mt-4 text-sm text-green-400">Message sent successfully.</p>
+            )}
+            {status === 'error' && (
+              <p className="mt-4 text-sm text-red-400">{errorMessage || 'Unable to send message.'}</p>
+            )}
           </motion.form>
         </div>
       </div>
