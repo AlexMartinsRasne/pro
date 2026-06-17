@@ -4,7 +4,10 @@ import '@/globals.css';
 export const metadata: Metadata = {
   title: 'Falcon - Digital Solutions',
   description: 'I build digital solutions that make impact. Software developer specializing in mobile, web, and real-time systems.',
-  keywords: ['portfolio', 'developer', 'web development', 'mobile development'],
+  keywords: ['portfolio', 'developer', 'web development', 'mobile development','falcon', 'software engineer', 'real-time systems'],
+  icons: {
+    icon: "/assets/logo.png",
+  },
 };
 
 export default function RootLayout({
