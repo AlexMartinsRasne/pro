@@ -7,6 +7,21 @@ import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 
 const reservedDomains = new Set(['example.com', 'example.org', 'example.net']);
+const disposableDomains = new Set([
+  'mailinator.com',
+  '10minutemail.com',
+  'trashmail.com',
+  'guerrillamail.com',
+  'temp-mail.org',
+  'tempmail.com',
+  'yopmail.com',
+  'dispostable.com',
+  'getnada.com',
+  'spamgourmet.com',
+  'fakeinbox.com',
+  'maildrop.cc',
+  'mintemail.com',
+]);
 
 export default function Contact() {
   const { ref, inView } = useInView({
@@ -57,8 +72,8 @@ export default function Contact() {
         errors.email = 'Please enter a valid email address.';
       } else {
         const domain = emailValue.split('@')[1]?.toLowerCase();
-        if (domain && reservedDomains.has(domain)) {
-          errors.email = 'Please use a real email address.';
+        if (domain && (reservedDomains.has(domain) || disposableDomains.has(domain))) {
+          errors.email = 'Please enter a real email address.';
         }
       }
     }
