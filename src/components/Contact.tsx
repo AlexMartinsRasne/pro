@@ -386,7 +386,7 @@ export default function Contact() {
                 disabled={status === 'sending'}
                 className="btn-primary w-full sm:w-auto disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {status === 'sending' ? 'Sending...' : 'Send Message'}
+                Send Message
               </motion.button>
 
               <motion.div
@@ -401,15 +401,15 @@ export default function Contact() {
                   exit={{ opacity: 0, y: 6 }}
                   role="status"
                   aria-label="Sending"
-                  className="flex h-11 w-11 items-center justify-center rounded-lg border border-slate-500 bg-slate-500/10 p-3 text-slate-100"
+                  className="flex h-11 w-11 items-center justify-center rounded-lg border border-emerald-500 bg-emerald-500/10 p-3 text-emerald-100"
                 >
                   <motion.span
                     className="text-lg"
                     aria-hidden="true"
-                    animate={{ rotate: 360 }}
-                    transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
+                    animate={{ scale: [1, 1.18, 1], opacity: [1, 0.7, 1] }}
+                    transition={{ repeat: Infinity, duration: 0.9, ease: 'easeInOut' }}
                   >
-                    ◌
+                    …
                   </motion.span>
                   <span className="sr-only">Sending</span>
                 </motion.div>
