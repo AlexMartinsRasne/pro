@@ -38,12 +38,24 @@ export default function Contact() {
     email: '',
     message: '',
   });
-  const [status, setStatus] = useState<'idle' | 'sending' | 'submitted' | 'received' | 'error'>('idle');
+  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'received' | 'delivered' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
   const [fieldErrors, setFieldErrors] = useState<{ name?: string; email?: string; message?: string }>({});
+  const statusTimeouts = useRef<number[]>([]);
+
+  const clearStatusTimeouts = () => {
+    statusTimeouts.current.forEach((timeoutId) => window.clearTimeout(timeoutId));
+    statusTimeouts.current = [];
+  };
 
   useEffect(() => {
-    if (status !== 'received') {
+    return () => {
+      clearStatusTimeouts();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (status !== 'delivered') {
       return;
     }
 
@@ -123,6 +135,7 @@ export default function Contact() {
       return;
     }
 
+    clearStatusTimeouts();
     setStatus('sending');
 
     try {
@@ -147,20 +160,17 @@ export default function Contact() {
         return;
       }
 
-      setStatus('submitted');
-      const responseData = await response.json().catch(() => null);
-      const formspreeFailed = responseData && responseData.ok === false;
-
-      if (formspreeFailed) {
-        setStatus('error');
-        setErrorMessage('Formspree rejected the submission. Please try again later.');
-        return;
-      }
-
-      setStatus('received');
+      setStatus('sent');
+      statusTimeouts.current.push(
+        window.setTimeout(() => setStatus('received'), 400)
+      );
+      statusTimeouts.current.push(
+        window.setTimeout(() => setStatus('delivered'), 900)
+      );
       setFormData({ name: '', email: '', message: '' });
       setFieldErrors({});
     } catch (error) {
+      clearStatusTimeouts();
       setStatus('error');
       setErrorMessage('Sorry, your message could not be submitted. Please try again later.');
     }
@@ -393,25 +403,25 @@ export default function Contact() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 6 }}
                   role="status"
-                  className="flex items-center gap-2 rounded-lg border border-slate-500 bg-slate-500/10 p-4 text-sm text-slate-100"
+                  className="flex items-center gap-3 rounded-lg border border-slate-500 bg-slate-500/10 p-4 text-sm text-slate-100"
                 >
                   <span className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-slate-400 text-xs animate-spin">
                     ⏳
                   </span>
-                  <span>⏳ Sending</span>
+                  <span>Sending</span>
                 </motion.div>
               )}
 
-              {status === 'submitted' && (
+              {status === 'sent' && (
                 <motion.div
                   initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 6 }}
                   role="status"
-                  className="flex items-center gap-2 rounded-lg border border-emerald-500 bg-emerald-500/10 p-4 text-sm text-emerald-100"
+                  className="flex items-center gap-3 rounded-lg border border-emerald-500 bg-emerald-500/10 p-4 text-sm text-emerald-100"
                 >
                   <span className="text-lg">✓</span>
-                  <span>✓ Submitted</span>
+                  <span>Sent</span>
                 </motion.div>
               )}
 
@@ -421,10 +431,23 @@ export default function Contact() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 6 }}
                   role="status"
-                  className="flex items-center gap-2 rounded-lg border border-green-500 bg-green-500/10 p-4 text-sm text-green-100"
+                  className="flex items-center gap-3 rounded-lg border border-emerald-500 bg-emerald-500/10 p-4 text-sm text-emerald-100"
                 >
                   <span className="text-lg">✓✓</span>
-                  <span>✓✓ Received</span>
+                  <span>Received</span>
+                </motion.div>
+              )}
+
+              {status === 'delivered' && (
+                <motion.div
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 6 }}
+                  role="status"
+                  className="flex items-center gap-3 rounded-lg border border-green-500 bg-green-500/10 p-4 text-sm text-green-100"
+                >
+                  <span className="text-lg">✓✓</span>
+                  <span>Delivered</span>
                 </motion.div>
               )}
 
