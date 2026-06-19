@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { FaGithub, FaLinkedin, FaWhatsapp } from 'react-icons/fa';
 import { FiMail } from 'react-icons/fi';
+import Link from 'next/link';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -127,12 +128,12 @@ export default function Footer() {
         >
           <p>&copy; {currentYear} Falcon. All rights reserved.</p>
           <div className="flex gap-6 mt-4 sm:mt-0">
-            <a href="#" className="hover:text-primary transition-colors">
+            <Link href="/privacy-policy" className="hover:text-primary transition-colors">
               Privacy Policy
-            </a>
-            <a href="#" className="hover:text-primary transition-colors">
+            </Link>
+            <Link href="/terms-of-service" className="hover:text-primary transition-colors">
               Terms of Service
-            </a>
+            </Link>
           </div>
         </motion.div>
       </div>
