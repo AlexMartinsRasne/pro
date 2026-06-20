@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import '@/globals.css';
+import ScrollState from '@/components/ScrollState';
 
 export const metadata: Metadata = {
   title: 'Falcon - Digital Solutions',
@@ -22,6 +23,7 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </head>
       <body className="bg-gradient-to-br from-secondary via-dark to-secondary">
+        <ScrollState />
         {children}
       </body>
     </html>
